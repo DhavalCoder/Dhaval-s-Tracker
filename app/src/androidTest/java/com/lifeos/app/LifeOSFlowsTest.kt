@@ -3,6 +3,7 @@ package com.lifeos.app
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
@@ -36,7 +37,7 @@ class LifeOSFlowsTest {
         compose.onNodeWithText("Study").performClick()
         compose.onNodeWithText("STUDY TRACKER").assertIsDisplayed()
         compose.onNodeWithText("DSA · Topic 1").assertIsDisplayed()
-        compose.onNodeWithText("DSA · Topic 1").performClick()
+        compose.onNodeWithTag("topic-checkbox-1").performClick()
         compose.waitForIdle()
 
         val topic = LifeOSDatabase.get(compose.activity).lifeOSDao()
@@ -52,12 +53,12 @@ class LifeOSFlowsTest {
         compose.onNodeWithText("Bench Press").performClick()
         compose.onNodeWithText("Log workout").assertIsDisplayed()
 
-        compose.onNodeWithText("Sets").performTextClearance()
-        compose.onNodeWithText("Sets").performTextInput("4")
-        compose.onNodeWithText("Reps per set").performTextClearance()
-        compose.onNodeWithText("Reps per set").performTextInput("8")
-        compose.onNodeWithText("Weight (kg)").performTextClearance()
-        compose.onNodeWithText("Weight (kg)").performTextInput("40")
+        compose.onNodeWithTag("workout-sets").performTextClearance()
+        compose.onNodeWithTag("workout-sets").performTextInput("4")
+        compose.onNodeWithTag("workout-reps").performTextClearance()
+        compose.onNodeWithTag("workout-reps").performTextInput("8")
+        compose.onNodeWithTag("workout-weight").performTextClearance()
+        compose.onNodeWithTag("workout-weight").performTextInput("40")
         compose.onNodeWithText("Save set").performClick()
         compose.waitForIdle()
 
