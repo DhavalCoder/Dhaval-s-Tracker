@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+concurrency:
+  group: lifeos-android-validation
+  cancel-in-progress: true
 permissions:
   contents: read
   actions: read
