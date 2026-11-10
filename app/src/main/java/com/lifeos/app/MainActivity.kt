@@ -180,7 +180,7 @@ internal fun LifeOS(context: Context) {
             Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)) {
                 when (tab) {
                     "Home" -> {
-                        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(bottom = 18.dp)) {
+                        LazyColumn(modifier = Modifier.testTag("home-list"), verticalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(bottom = 18.dp)) {
                             item {
                                 Spacer(Modifier.height(8.dp))
                                 Text("YOUR DAY", color = muted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
