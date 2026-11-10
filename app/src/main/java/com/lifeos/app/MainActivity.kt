@@ -3,7 +3,7 @@ package com.lifeos.app
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -53,7 +53,7 @@ private val categories = listOf(
     "Cyber Security & AppSec" to 23, "DevOps / Cloud / Infrastructure" to 23
 )
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
