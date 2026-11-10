@@ -39,11 +39,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val bg = Color(0xFF090B10)
-private val panel = Color(0xFF171B26)
-private val violet = Color(0xFF9B8CFF)
-private val mint = Color(0xFF55D6A5)
-private val muted = Color(0xFF9AA3B5)
+private val bg = Color(0xFF071329)
+private val panel = Color(0xFF173B70)
+private val violet = Color(0xFF0865F5)
+private val mint = Color(0xFFB8F52A)
+private val muted = Color(0xFFA9B8D2)
+private val paleCard = Color(0xFFF0F1FF)
+private val deepBlue = Color(0xFF073B91)
+private val softBlue = Color(0xFF31588D)
 
 data class Topic(val id: Long, val category: String, val title: String, val done: Boolean = false)
 data class SetLog(val exercise: String, val sets: Int, val reps: Int, val weight: Double, val day: String)
@@ -162,8 +165,23 @@ internal fun LifeOS(context: Context) {
             containerColor = bg,
             topBar = {
                 TopAppBar(
-                    title = { Column { Text("LIFEOS", fontWeight = FontWeight.Black, fontSize = 23.sp); Text("Build your consistency.", color = muted, fontSize = 11.sp) } },
-                    actions = { Text("● LIVE", color = mint, fontSize = 11.sp, modifier = Modifier.padding(end = 18.dp)) },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.size(42.dp).background(softBlue, CircleShape), contentAlignment = Alignment.Center) {
+                                Icon(Icons.Default.Bolt, null, tint = mint, modifier = Modifier.size(25.dp))
+                            }
+                            Spacer(Modifier.width(11.dp))
+                            Column {
+                                Text("Good morning!", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.White)
+                                Text("Your progress, one day at a time.", color = muted, fontSize = 11.sp)
+                            }
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {}) {
+                            Icon(Icons.Default.NotificationsNone, "Notifications", tint = Color.White)
+                        }
+                    },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = bg, titleContentColor = Color.White)
                 )
             },
@@ -183,16 +201,75 @@ internal fun LifeOS(context: Context) {
                         LazyColumn(modifier = Modifier.testTag("home-list"), verticalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(bottom = 18.dp)) {
                             item {
                                 Spacer(Modifier.height(8.dp))
-                                Text("YOUR DAY", color = muted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                                Text("Make today count.", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
-                                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(top = 14.dp)) {
-                                    StatCard("STUDY", "$done / $total", "topics completed", violet, Modifier.weight(1f))
-                                    StatCard("GYM", "${logs.size}", "workout logs", mint, Modifier.weight(1f))
+                                Text("YOUR DAILY OVERVIEW", color = muted, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp)
+                                Text("Total Progress", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
+                                Card(
+                                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                                    colors = CardDefaults.cardColors(containerColor = paleCard),
+                                    shape = RoundedCornerShape(25.dp)
+                                ) {
+                                    Column(Modifier.padding(19.dp)) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text("LIFEOS SCORE", color = Color(0xFF5E6680), fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                                            Icon(Icons.Default.AutoAwesome, null, tint = violet)
+                                        }
+                                        Text("$done / $total", color = Color(0xFF101A32), fontSize = 34.sp, fontWeight = FontWeight.Bold)
+                                        Text("Study topics completed", color = Color(0xFF69728A), fontSize = 12.sp)
+                                        Spacer(Modifier.height(14.dp))
+                                        LinearProgressIndicator(
+                                            progress = { if (total == 0) 0f else done.toFloat() / total },
+                                            modifier = Modifier.fillMaxWidth().height(8.dp),
+                                            color = violet,
+                                            trackColor = Color(0xFFD4D9EB)
+                                        )
+                                        Row(Modifier.fillMaxWidth().padding(top = 7.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Keep building momentum", color = Color(0xFF69728A), fontSize = 10.sp)
+                                            Text("${if (total == 0) 0 else done * 100 / total}%", color = Color(0xFF101A32), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                        }
+                                    }
                                 }
                             }
-                            item { ModuleCard("STUDY SPACE", "170-topic learning roadmap", "Track learning, revisions and completion", violet) { tab = "Study" } }
-                            item { ModuleCard("GYM SPACE", "Push · Pull · Legs", "Log sets, reps, weights and training", mint) { tab = "Gym" } }
-                            item { TimerPanel(seconds, running, isBreak, { running = !running }, { running = false; isBreak = false; seconds = 25 * 60 }, { running = false; isBreak = true; seconds = 5 * 60 }) }
+                            item {
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = softBlue),
+                                    shape = RoundedCornerShape(23.dp)
+                                ) {
+                                    Column(Modifier.padding(17.dp)) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Column(Modifier.weight(1f)) {
+                                                Text("YOUR ROUTINE", color = Color(0xFFC7D5EF), fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                                                Text("Small steps. Big change.", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                            }
+                                            Icon(Icons.Default.Bolt, null, tint = mint, modifier = Modifier.size(28.dp))
+                                        }
+                                        Spacer(Modifier.height(14.dp))
+                                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                            Column(Modifier.weight(1f)) {
+                                                Text("STUDY", color = Color(0xFFC7D5EF), fontSize = 10.sp)
+                                                Text("$done / $total", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+                                                Text("topics done", color = Color(0xFFC7D5EF), fontSize = 10.sp)
+                                            }
+                                            Column(Modifier.weight(1f)) {
+                                                Text("GYM", color = Color(0xFFC7D5EF), fontSize = 10.sp)
+                                                Text("${logs.size}", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+                                                Text("workout logs", color = Color(0xFFC7D5EF), fontSize = 10.sp)
+                                            }
+                                        }
+                                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                            Button(onClick = { tab = "Study" }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = violet), shape = RoundedCornerShape(14.dp)) { Text("Open Study") }
+                                            OutlinedButton(onClick = { tab = "Gym" }, modifier = Modifier.weight(1f), colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White), shape = RoundedCornerShape(14.dp)) { Text("Open Gym") }
+                                        }
+                                    }
+                                }
+                            }
+                            item {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text("Focus session", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                                    Text("POMODORO", color = mint, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                                }
+                                TimerPanel(seconds, running, isBreak, { running = !running }, { running = false; isBreak = false; seconds = 25 * 60 }, { running = false; isBreak = true; seconds = 5 * 60 })
+                            }
                         }
                     }
                     "Study" -> {
