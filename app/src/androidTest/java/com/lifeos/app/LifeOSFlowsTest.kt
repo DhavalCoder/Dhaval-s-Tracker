@@ -86,6 +86,19 @@ class LifeOSFlowsTest {
         compose.onNodeWithText("Consistency over intensity.").assertIsDisplayed()
     }
 
+
+    @Test
+    fun localDatabaseIsEncryptedAtRest() {
+        showApp()
+        val dbFile = compose.activity.getDatabasePath("lifeos_private.db")
+        assertEquals(true, dbFile.exists())
+        val header = File(dbFile.absolutePath).inputStream().use { input ->
+            ByteArray(16).also { input.read(it) }
+        }
+        val sqliteHeader = "SQLite format 3\\u0000".toByteArray(Charsets.US_ASCII)
+        assertFalse(header.copyOfRange(0, sqliteHeader.size).contentEquals(sqliteHeader))
+    }
+
     @Test
     fun pomodoroCanStartAndTick() {
         showApp()
