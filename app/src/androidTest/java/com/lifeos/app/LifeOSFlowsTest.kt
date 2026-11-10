@@ -95,7 +95,7 @@ class LifeOSFlowsTest {
         val header = File(dbFile.absolutePath).inputStream().use { input ->
             ByteArray(16).also { input.read(it) }
         }
-        val sqliteHeader = "SQLite format 3\\u0000".toByteArray(Charsets.US_ASCII)
+        val sqliteHeader = "SQLite format 3\u0000".toByteArray(Charsets.US_ASCII)
         assertFalse(header.copyOfRange(0, sqliteHeader.size).contentEquals(sqliteHeader))
     }
 
