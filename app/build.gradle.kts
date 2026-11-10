@@ -30,6 +30,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
     implementation("androidx.room:room-runtime:2.8.2")
     implementation("androidx.room:room-ktx:2.8.2")
+    implementation("net.zetetic:android-database-sqlcipher:4.5.4")
+    implementation("androidx.sqlite:sqlite:2.4.0")
     implementation("androidx.biometric:biometric:1.1.0")
     kapt("androidx.room:room-compiler:2.8.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
