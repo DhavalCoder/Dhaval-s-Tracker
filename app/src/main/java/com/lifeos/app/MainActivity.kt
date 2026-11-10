@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -212,7 +213,7 @@ internal fun LifeOS(context: Context) {
                                     Card(colors = CardDefaults.cardColors(containerColor = panel)) {
                                         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                                             Column(Modifier.weight(1f)) { Text(topic.title, color = Color.White, fontWeight = FontWeight.Medium); Text(topic.category, color = muted, fontSize = 10.sp) }
-                                            Checkbox(checked = topic.done, onCheckedChange = { checked ->
+                                            Checkbox(modifier = Modifier.testTag("topic-checkbox-${topic.id}"), checked = topic.done, onCheckedChange = { checked ->
                                                 val idx = topics.indexOfFirst { it.id == topic.id }; if (idx >= 0) topics[idx] = topic.copy(done = checked); saveTopics(context, topics)
                                             }, colors = CheckboxDefaults.colors(checkedColor = mint))
                                         }
@@ -304,10 +305,10 @@ internal fun LifeOS(context: Context) {
         title = { Text("Log workout") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                OutlinedTextField(exercise, { exercise = it }, label = { Text("Exercise") }, singleLine = true)
-                OutlinedTextField(setCount, { setCount = it }, label = { Text("Sets") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
-                OutlinedTextField(reps, { reps = it }, label = { Text("Reps per set") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
-                OutlinedTextField(weight, { weight = it }, label = { Text("Weight (kg)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true)
+                OutlinedTextField(exercise, { exercise = it }, label = { Text("Exercise") }, modifier = Modifier.testTag("workout-exercise"), singleLine = true)
+                OutlinedTextField(setCount, { setCount = it }, label = { Text("Sets") }, modifier = Modifier.testTag("workout-sets"), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
+                OutlinedTextField(reps, { reps = it }, label = { Text("Reps per set") }, modifier = Modifier.testTag("workout-reps"), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
+                OutlinedTextField(weight, { weight = it }, label = { Text("Weight (kg)") }, modifier = Modifier.testTag("workout-weight"), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true)
             }
         },
         confirmButton = { TextButton(onClick = {
