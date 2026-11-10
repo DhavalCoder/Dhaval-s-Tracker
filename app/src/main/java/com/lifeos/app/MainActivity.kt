@@ -7,6 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,7 +56,35 @@ private val categories = listOf(
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { LifeOS(this) }
+        setContent {
+            var unlocked by remember { mutableStateOf(false) }
+            var splash by remember { mutableStateOf(true) }
+            LaunchedEffect(Unit) { delay(1400); splash = false }
+            when {
+                splash -> SplashScreen()
+                unlocked -> LifeOS(this@MainActivity)
+                else -> LockScreen { authenticate { unlocked = true } }
+            }
+        }
+    }
+
+    private fun authenticate(onSuccess: () -> Unit) {
+        val manager = BiometricManager.from(this)
+        val authenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG or
+            BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        if (manager.canAuthenticate(authenticators) != BiometricManager.BIOMETRIC_SUCCESS) return
+        val prompt = BiometricPrompt(this, ContextCompat.getMainExecutor(this),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    onSuccess()
+                }
+            })
+        val info = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Unlock LIFEOS")
+            .setSubtitle("Use your fingerprint or phone screen lock")
+            .setAllowedAuthenticators(authenticators)
+            .build()
+        prompt.authenticate(info)
     }
 }
 
@@ -285,6 +316,46 @@ private fun LifeOS(context: Context) {
         }) { Text("Save set") } },
         dismissButton = { TextButton(onClick = { showSetDialog = false }) { Text("Cancel") } }
     )
+}
+
+
+@Composable
+private fun SplashScreen() {
+    MaterialTheme(colorScheme = darkColorScheme(primary = violet, background = bg, surface = panel)) {
+        Box(Modifier.fillMaxSize().background(bg), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(Modifier.size(82.dp).background(violet, RoundedCornerShape(26.dp)), contentAlignment = Alignment.Center) {
+                    Icon(Icons.Default.Bolt, null, tint = bg, modifier = Modifier.size(48.dp))
+                }
+                Spacer(Modifier.height(20.dp))
+                Text("LIFEOS", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Black)
+                Text("YOUR LIFE. YOUR PROGRESS.", color = muted, fontSize = 10.sp, letterSpacing = 2.sp)
+                Spacer(Modifier.height(26.dp))
+                CircularProgressIndicator(color = mint, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LockScreen(onUnlock: () -> Unit) {
+    MaterialTheme(colorScheme = darkColorScheme(primary = violet, background = bg, surface = panel)) {
+        Box(Modifier.fillMaxSize().background(bg).padding(28.dp), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(Icons.Default.Fingerprint, null, tint = violet, modifier = Modifier.size(82.dp))
+                Spacer(Modifier.height(22.dp))
+                Text("Welcome back", color = Color.White, fontSize = 27.sp, fontWeight = FontWeight.Bold)
+                Text("Unlock your personal workspace", color = muted, fontSize = 13.sp)
+                Spacer(Modifier.height(28.dp))
+                Button(onClick = onUnlock, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Default.Fingerprint, null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Unlock with fingerprint")
+                }
+                Text("Your phone PIN, pattern or password can be used as a fallback when supported.", color = muted, fontSize = 11.sp, modifier = Modifier.padding(top = 14.dp))
+            }
+        }
+    }
 }
 
 @Composable private fun StatCard(title: String, value: String, detail: String, accent: Color, modifier: Modifier = Modifier) {
