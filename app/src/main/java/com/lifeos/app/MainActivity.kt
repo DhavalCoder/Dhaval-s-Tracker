@@ -416,7 +416,7 @@ private fun SplashScreen() {
 }
 
 @Composable
-private fun LockScreen(onUnlock: () -> Unit) {
+internal fun LockScreen(onUnlock: () -> Unit) {
     MaterialTheme(colorScheme = darkColorScheme(primary = violet, background = bg, surface = panel)) {
         Box(Modifier.fillMaxSize().background(bg).padding(28.dp), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
