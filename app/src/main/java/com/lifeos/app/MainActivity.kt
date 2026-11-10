@@ -129,7 +129,7 @@ private fun saveLogs(ctx: Context, logs: List<SetLog>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LifeOS(context: Context) {
+internal fun LifeOS(context: Context) {
     val topics = remember { mutableStateListOf<Topic>().also { it.addAll(loadTopics(context)) } }
     val logs = remember { mutableStateListOf<SetLog>().also { it.addAll(loadLogs(context)) } }
     var tab by remember { mutableStateOf("Home") }
