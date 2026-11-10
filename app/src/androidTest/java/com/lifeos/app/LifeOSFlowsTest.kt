@@ -21,7 +21,7 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class LifeOSFlowsTest {
     @get:Rule
-    val compose = createAndroidComposeRule<LifeOSTestActivity>()
+    val compose = createAndroidComposeRule<DebugLifeOSTestActivity>()
 
     @Before
     fun resetLocalDatabase() {
