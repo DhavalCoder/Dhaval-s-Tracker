@@ -54,6 +54,9 @@ interface LifeOSDao {
 
     @Query("DELETE FROM workout_logs WHERE id = :id")
     fun deleteWorkout(id: Long)
+
+    @Query("DELETE FROM workout_logs")
+    fun clearWorkoutLogs()
 }
 
 @Database(entities = [TopicEntity::class, WorkoutEntity::class], version = 1, exportSchema = false)
@@ -69,7 +72,7 @@ abstract class LifeOSDatabase : RoomDatabase() {
                     context.applicationContext,
                     LifeOSDatabase::class.java,
                     "lifeos_private.db"
-                ).build().also { INSTANCE = it }
+                ).allowMainThreadQueries().build().also { INSTANCE = it }
             }
     }
 }
