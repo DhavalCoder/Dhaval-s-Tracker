@@ -58,13 +58,18 @@ class MainActivity : ComponentActivity() {
 }
 
 private fun loadTopics(ctx: Context): MutableList<Topic> {
-    val raw = ctx.getSharedPreferences("lifeos", 0).getString("topics", null)
-    if (raw != null) return try {
-        val a = JSONArray(raw); MutableList(a.length()) { i ->
+    val dao = LifeOSDatabase.get(ctx).lifeOSDao()
+    val stored = dao.getTopics()
+    if (stored.isNotEmpty()) return stored.map { Topic(it.id, it.category, it.title, it.completed) }.toMutableList()
+    // One-time migration from the previous SharedPreferences-based build.
+    val legacy = ctx.getSharedPreferences("lifeos", 0).getString("topics", null)
+    val imported = if (legacy != null) try {
+        val a = JSONArray(legacy); MutableList(a.length()) { i ->
             val o = a.getJSONObject(i); Topic(o.getLong("id"), o.getString("category"), o.getString("title"), o.getBoolean("done"))
         }
-    } catch (_: Exception) { seedTopics() }
-    return seedTopics()
+    } catch (_: Exception) { seedTopics() } else seedTopics()
+    dao.putTopics(imported.map { TopicEntity(it.id, it.category, it.title, it.done) })
+    return imported
 }
 private fun seedTopics(): MutableList<Topic> {
     val result = mutableListOf<Topic>(); var id = 1L
@@ -72,22 +77,23 @@ private fun seedTopics(): MutableList<Topic> {
     return result
 }
 private fun saveTopics(ctx: Context, topics: List<Topic>) {
-    val a = JSONArray()
-    topics.forEach { a.put(JSONObject().put("id", it.id).put("category", it.category).put("title", it.title).put("done", it.done)) }
-    ctx.getSharedPreferences("lifeos", 0).edit().putString("topics", a.toString()).apply()
+    LifeOSDatabase.get(ctx).lifeOSDao().putTopics(topics.map { TopicEntity(it.id, it.category, it.title, it.done) })
 }
 private fun loadLogs(ctx: Context): MutableList<SetLog> {
+    val dao = LifeOSDatabase.get(ctx).lifeOSDao()
+    val stored = dao.getWorkoutLogs()
+    if (stored.isNotEmpty()) return stored.map { SetLog(it.exercise, it.sets, it.reps, it.weight, it.day) }.toMutableList()
     val raw = ctx.getSharedPreferences("lifeos", 0).getString("logs", null) ?: return mutableListOf()
     return try {
         val a = JSONArray(raw); MutableList(a.length()) { i ->
             val o = a.getJSONObject(i); SetLog(o.getString("exercise"), o.getInt("sets"), o.getInt("reps"), o.getDouble("weight"), o.getString("day"))
-        }
+        }.also { saveLogs(ctx, it) }
     } catch (_: Exception) { mutableListOf() }
 }
 private fun saveLogs(ctx: Context, logs: List<SetLog>) {
-    val a = JSONArray()
-    logs.forEach { a.put(JSONObject().put("exercise", it.exercise).put("sets", it.sets).put("reps", it.reps).put("weight", it.weight).put("day", it.day)) }
-    ctx.getSharedPreferences("lifeos", 0).edit().putString("logs", a.toString()).apply()
+    val dao = LifeOSDatabase.get(ctx).lifeOSDao()
+    dao.clearWorkoutLogs()
+    logs.forEach { dao.insertWorkout(WorkoutEntity(exercise = it.exercise, sets = it.sets, reps = it.reps, weight = it.weight, day = it.day)) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
