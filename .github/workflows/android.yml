@@ -44,11 +44,6 @@ jobs:
             set -eux
             adb devices -l
             adb wait-for-device
-            for attempt in $(seq 1 90); do
-              booted="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
-              if [ "$booted" = "1" ]; then break; fi
-              sleep 2
-            done
             test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
             adb shell settings put global window_animation_scale 0
             adb shell settings put global transition_animation_scale 0
