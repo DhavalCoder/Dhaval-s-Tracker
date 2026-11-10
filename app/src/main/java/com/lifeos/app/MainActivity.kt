@@ -186,9 +186,9 @@ internal fun LifeOS(context: Context) {
                 )
             },
             bottomBar = {
-                NavigationBar(containerColor = panel) {
+                NavigationBar(containerColor = Color(0xFF102B55)) {
                     listOf("Home", "Study", "Gym", "Journal", "Progress").forEach { name ->
-                        NavigationBarItem(selected = tab == name, onClick = { tab = name },
+                        NavigationBarItem(selected = tab == name, onClick = { tab = name }, colors = NavigationBarItemDefaults.colors(selectedIconColor = violet, selectedTextColor = Color.White, indicatorColor = Color(0xFFDAE5FF), unselectedIconColor = Color(0xFFB2C3DF), unselectedTextColor = Color(0xFFB2C3DF)),
                             icon = { Icon(when(name) { "Home" -> Icons.Default.Home; "Study" -> Icons.Default.MenuBook; "Gym" -> Icons.Default.FitnessCenter; "Journal" -> Icons.Default.PhotoCamera; else -> Icons.Default.Insights }, null) },
                             label = { Text(name, fontSize = 10.sp) })
                     }
@@ -287,7 +287,7 @@ internal fun LifeOS(context: Context) {
                             val visible = topics.filter { selectedCategory == "All" || it.category == selectedCategory }
                             LazyColumn(verticalArrangement = Arrangement.spacedBy(7.dp), contentPadding = PaddingValues(bottom = 12.dp)) {
                                 items(visible, key = { it.id }) { topic ->
-                                    Card(colors = CardDefaults.cardColors(containerColor = panel)) {
+                                    Card(colors = CardDefaults.cardColors(containerColor = softBlue), shape = RoundedCornerShape(16.dp)) {
                                         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                                             Column(Modifier.weight(1f)) { Text(topic.title, color = Color.White, fontWeight = FontWeight.Medium); Text(topic.category, color = muted, fontSize = 10.sp) }
                                             Checkbox(modifier = Modifier.testTag("topic-checkbox-${topic.id}"), checked = topic.done, onCheckedChange = { checked ->
@@ -323,7 +323,7 @@ internal fun LifeOS(context: Context) {
                             Text("RECENT SETS", color = muted, fontSize = 11.sp, modifier = Modifier.padding(top = 12.dp))
                             LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 items(logs.reversed()) { log ->
-                                    Card(colors = CardDefaults.cardColors(containerColor = panel)) {
+                                    Card(colors = CardDefaults.cardColors(containerColor = softBlue), shape = RoundedCornerShape(16.dp)) {
                                         Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
                                             Column(Modifier.weight(1f)) { Text(log.exercise, color = Color.White); Text("${log.sets} sets × ${log.reps} reps · ${log.weight} kg · ${log.day}", color = muted, fontSize = 11.sp) }
                                             IconButton(onClick = { logs.remove(log); saveLogs(context, logs) }) { Icon(Icons.Default.Delete, null, tint = Color.Gray) }
@@ -437,7 +437,7 @@ private fun LockScreen(onUnlock: () -> Unit) {
 }
 
 @Composable private fun StatCard(title: String, value: String, detail: String, accent: Color, modifier: Modifier = Modifier) {
-    Card(modifier, colors = CardDefaults.cardColors(containerColor = panel), shape = RoundedCornerShape(18.dp)) {
+    Card(modifier, colors = CardDefaults.cardColors(containerColor = softBlue), shape = RoundedCornerShape(20.dp)) {
         Column(Modifier.padding(15.dp)) { Text(title, color = accent, fontSize = 10.sp, fontWeight = FontWeight.Bold); Text(value, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold); Text(detail, color = muted, fontSize = 11.sp) }
     }
 }
@@ -447,12 +447,12 @@ private fun LockScreen(onUnlock: () -> Unit) {
     }
 }
 @Composable private fun ExerciseRow(name: String, click: (String) -> Unit) {
-    Card(Modifier.fillMaxWidth().padding(bottom = 5.dp).clickable { click(name) }, colors = CardDefaults.cardColors(containerColor = panel)) {
+    Card(Modifier.fillMaxWidth().padding(bottom = 5.dp).clickable { click(name) }, colors = CardDefaults.cardColors(containerColor = softBlue), shape = RoundedCornerShape(15.dp)) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) { Text(name, color = Color.White, modifier = Modifier.weight(1f)); Icon(Icons.Default.AddCircle, null, tint = mint) }
     }
 }
 @Composable private fun TimerPanel(seconds: Int, running: Boolean, isBreak: Boolean, toggle: () -> Unit, reset: () -> Unit, breakMode: () -> Unit) {
-    Card(colors = CardDefaults.cardColors(containerColor = panel), shape = RoundedCornerShape(20.dp)) {
+    Card(colors = CardDefaults.cardColors(containerColor = softBlue), shape = RoundedCornerShape(22.dp)) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) { Text(if (isBreak) "BREAK TIMER" else "POMODORO FOCUS", color = muted, fontSize = 10.sp, modifier = Modifier.weight(1f)); Text(if (running) "RUNNING" else "PAUSED", color = mint, fontSize = 10.sp) }
             Row(verticalAlignment = Alignment.CenterVertically) {
