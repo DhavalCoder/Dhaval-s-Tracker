@@ -11,6 +11,8 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
 @Entity(tableName = "study_topics", indices = [Index("category")])
 data class TopicEntity(
@@ -68,11 +70,16 @@ abstract class LifeOSDatabase : RoomDatabase() {
 
         fun get(context: Context): LifeOSDatabase =
             INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    LifeOSDatabase::class.java,
-                    "lifeos_private.db"
-                ).allowMainThreadQueries().build().also { INSTANCE = it }
+                INSTANCE ?: run {
+                    SQLiteDatabase.loadLibs(context.applicationContext)
+                    val passphrase = DatabaseKey.get(context.applicationContext)
+                    val factory = SupportFactory(passphrase)
+                    Room.databaseBuilder(
+                        context.applicationContext,
+                        LifeOSDatabase::class.java,
+                        "lifeos_private.db"
+                    ).openHelperFactory(factory).allowMainThreadQueries().build().also { INSTANCE = it }
+                }
             }
     }
 }
