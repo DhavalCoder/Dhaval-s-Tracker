@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
@@ -87,6 +89,7 @@ class LifeOSFlowsTest {
     @Test
     fun pomodoroCanStartAndTick() {
         showApp()
+        compose.onNodeWithTag("home-list").performScrollToNode(hasText("POMODORO FOCUS"))
         compose.onNodeWithText("POMODORO FOCUS").assertIsDisplayed()
         compose.mainClock.autoAdvance = false
         compose.onNodeWithText("Start").performClick()
